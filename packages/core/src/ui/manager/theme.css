@@ -1,0 +1,352 @@
+/* Extension Extension Manager Theme - Dark Mode Premium Design */
+
+#extension-extension-root,
+#extension-extension-root * {
+    /* CSS Variables - Dark Theme */
+    --ee-background: oklch(0.2223 0.0060 271.1393);
+    --ee-foreground: oklch(0.9551 0 0);
+    --ee-card: oklch(0.2568 0.0076 274.6528);
+    --ee-card-foreground: oklch(0.9551 0 0);
+    --ee-popover: oklch(0.2568 0.0076 274.6528);
+    --ee-popover-foreground: oklch(0.9551 0 0);
+    --ee-primary: oklch(0.6132 0.2294 291.7437);
+    --ee-primary-foreground: oklch(1.0000 0 0);
+    --ee-secondary: oklch(0.2940 0.0130 272.9312);
+    --ee-secondary-foreground: oklch(0.9551 0 0);
+    --ee-muted: oklch(0.2940 0.0130 272.9312);
+    --ee-muted-foreground: oklch(0.7058 0 0);
+    --ee-accent: oklch(0.2795 0.0368 260.0310);
+    --ee-accent-foreground: oklch(0.7857 0.1153 246.6596);
+    --ee-destructive: oklch(0.7106 0.1661 22.2162);
+    --ee-destructive-foreground: oklch(1.0000 0 0);
+    --ee-border: oklch(0.3289 0.0092 268.3843);
+    --ee-input: oklch(0.3289 0.0092 268.3843);
+    --ee-ring: oklch(0.6132 0.2294 291.7437);
+
+    /* Sidebar specific */
+    --ee-sidebar: oklch(0.2011 0.0039 286.0396);
+    --ee-sidebar-foreground: oklch(0.9551 0 0);
+    --ee-sidebar-primary: oklch(0.6132 0.2294 291.7437);
+    --ee-sidebar-primary-foreground: oklch(1.0000 0 0);
+    --ee-sidebar-accent: oklch(0.2940 0.0130 272.9312);
+    --ee-sidebar-accent-foreground: oklch(0.6132 0.2294 291.7437);
+    --ee-sidebar-border: oklch(0.3289 0.0092 268.3843);
+    --ee-sidebar-ring: oklch(0.6132 0.2294 291.7437);
+
+    /* Typography */
+    --ee-font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --ee-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+    /* Border Radius */
+    --ee-radius: 0.75rem;
+    --ee-radius-sm: 0.5rem;
+    --ee-radius-md: 0.625rem;
+    --ee-radius-lg: 0.75rem;
+    --ee-radius-xl: 1rem;
+
+    /* Shadows */
+    --ee-shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+    --ee-shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
+    --ee-shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
+    --ee-shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
+    --ee-shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
+    --ee-shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.40);
+
+    /* Letter spacing */
+    --ee-tracking-normal: -0.025em;
+}
+
+/* Base reset for manager modal */
+.ee-manager-modal {
+    all: initial;
+    font-family: var(--ee-font-sans);
+    letter-spacing: var(--ee-tracking-normal);
+    color: var(--ee-foreground);
+    background: var(--ee-background);
+}
+
+.ee-manager-modal * {
+    box-sizing: border-box;
+}
+
+/* Modal backdrop */
+.ee-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999998;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(12px);
+}
+
+/* Modal container */
+.ee-modal-container {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.ee-modal-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    max-width: 1400px;
+    max-height: 900px;
+    background: var(--ee-card);
+    border: 1px solid var(--ee-border);
+    border-radius: var(--ee-radius-lg);
+    box-shadow: var(--ee-shadow-2xl);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Modal header */
+.ee-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--ee-border);
+    background: var(--ee-card);
+}
+
+.ee-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ee-foreground);
+    margin: 0;
+}
+
+.ee-modal-close {
+    padding: 0.625rem;
+    border-radius: var(--ee-radius-sm);
+    background: transparent;
+    color: var(--ee-muted-foreground);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ee-modal-close:hover {
+    background: var(--ee-accent);
+    color: var(--ee-accent-foreground);
+}
+
+/* Sidebar */
+.ee-sidebar {
+    width: 240px;
+    background: var(--ee-sidebar);
+    border-right: 1px solid var(--ee-sidebar-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.ee-sidebar-nav {
+    flex: 1;
+    padding: 0.75rem 0;
+}
+
+.ee-sidebar-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ee-sidebar-foreground);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    letter-spacing: var(--ee-tracking-normal);
+}
+
+.ee-sidebar-item:hover {
+    background: var(--ee-sidebar-accent);
+    color: var(--ee-sidebar-accent-foreground);
+}
+
+.ee-sidebar-item.active {
+    background: var(--ee-sidebar-primary);
+    color: var(--ee-sidebar-primary-foreground);
+    font-weight: 600;
+}
+
+.ee-sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--ee-sidebar-border);
+    font-size: 0.75rem;
+    color: var(--ee-muted-foreground);
+}
+
+/* Content area */
+.ee-content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--ee-background);
+}
+
+/* Dashboard */
+.ee-dashboard {
+    padding: 2.5rem;
+}
+
+.ee-dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.ee-dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ee-foreground);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: var(--ee-tracking-normal);
+}
+
+.ee-dashboard-subtitle {
+    font-size: 1rem;
+    color: var(--ee-muted-foreground);
+    margin: 0;
+}
+
+/* Stats grid */
+.ee-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.ee-stat-card {
+    background: var(--ee-card);
+    border: 1px solid var(--ee-border);
+    border-radius: var(--ee-radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--ee-shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.ee-stat-card:hover {
+    box-shadow: var(--ee-shadow-md);
+    transform: translateY(-2px);
+}
+
+.ee-stat-icon {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ee-radius-md);
+    margin-bottom: 1.25rem;
+}
+
+.ee-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--ee-foreground);
+    margin: 0 0 0.375rem 0;
+    line-height: 1;
+}
+
+.ee-stat-label {
+    font-size: 0.875rem;
+    color: var(--ee-muted-foreground);
+    margin: 0;
+}
+
+/* Section card */
+.ee-section {
+    background: var(--ee-card);
+    border: 1px solid var(--ee-border);
+    border-radius: var(--ee-radius-lg);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--ee-shadow-sm);
+}
+
+.ee-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ee-foreground);
+    margin: 0 0 1.25rem 0;
+}
+
+/* Button styles */
+.ee-button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    font-family: var(--ee-font-sans);
+    letter-spacing: var(--ee-tracking-normal);
+    border-radius: var(--ee-radius-md);
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ee-button-primary {
+    background: var(--ee-primary);
+    color: var(--ee-primary-foreground);
+}
+
+.ee-button-primary:hover {
+    opacity: 0.9;
+    box-shadow: var(--ee-shadow-md);
+}
+
+.ee-button-secondary {
+    background: var(--ee-secondary);
+    color: var(--ee-secondary-foreground);
+}
+
+.ee-button-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Status badge */
+.ee-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.ee-status-success {
+    color: #10b981;
+}
+
+.ee-status-muted {
+    color: var(--ee-muted-foreground);
+}
+
+/* Scrollbar */
+.ee-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ee-content::-webkit-scrollbar-track {
+    background: var(--ee-background);
+}
+
+.ee-content::-webkit-scrollbar-thumb {
+    background: var(--ee-border);
+    border-radius: 4px;
+}
+
+.ee-content::-webkit-scrollbar-thumb:hover {
+    background: var(--ee-muted);
+}

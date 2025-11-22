@@ -1,0 +1,102 @@
+/* Additional UI improvements - Dividers and spacing */
+
+/* Divider lines */
+.ee-divider {
+    height: 1px;
+    background: var(--ee-border);
+    margin: 1.5rem 0;
+}
+
+.ee-divider-vertical {
+    width: 1px;
+    background: var(--ee-border);
+    margin: 0 1rem;
+}
+
+/* Improved section spacing with subtle dividers */
+.ee-section+.ee-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ee-border);
+}
+
+/* Item list with dividers */
+.ee-item-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.ee-item-list>*+* {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ee-border);
+}
+
+/* Subtle borders for cards in grid */
+.ee-stats-grid .ee-stat-card {
+    position: relative;
+}
+
+.ee-stats-grid .ee-stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--ee-radius-lg);
+    padding: 1px;
+    background: linear-gradient(135deg, var(--ee-border), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Form field dividers */
+.ee-form-field+.ee-form-field {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ee-border);
+}
+
+/* List item separators */
+.ee-list-item {
+    padding: 1rem 0;
+}
+
+.ee-list-item+.ee-list-item {
+    border-top: 1px solid var(--ee-border);
+}
+
+/* Dashboard header divider */
+.ee-dashboard-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--ee-border);
+}
+
+/* Inline dividers for info sections */
+.ee-info-group {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.ee-info-group>*+*::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 60%;
+    background: var(--ee-border);
+}
+
+/* Subtle shadow enhancements */
+.ee-section {
+    box-shadow: 0 0 0 1px var(--ee-border);
+}
+
+.ee-modal-content {
+    box-shadow:
+        0 0 0 1px var(--ee-border),
+        var(--ee-shadow-2xl);
+}
