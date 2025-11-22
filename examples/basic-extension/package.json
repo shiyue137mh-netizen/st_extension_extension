@@ -1,0 +1,16 @@
+{
+    "name": "basic-extension",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "st-extension build"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "@extension-extension/core": "workspace:*"
+    },
+    "devDependencies": {
+        "@extension-extension/build-tools": "workspace:*"
+    }
+}

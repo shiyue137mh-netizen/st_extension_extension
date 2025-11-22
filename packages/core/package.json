@@ -1,0 +1,29 @@
+{
+    "name": "@extension-extension/core",
+    "version": "2.0.0",
+    "type": "module",
+    "main": "./dist/index.js",
+    "scripts": {
+        "dev": "vite build --watch",
+        "build": "vite build",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "framer-motion": "^11.0.0",
+        "zustand": "^4.5.0",
+        "mitt": "^3.0.0",
+        "handlebars": "^4.7.8",
+        "react-hotkeys-hook": "^4.5.0",
+        "@extension-extension/ui": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.66",
+        "@types/react-dom": "^18.2.22",
+        "@types/node": "^20.11.0",
+        "typescript": "^5.2.2",
+        "vite": "^5.2.0",
+        "@vitejs/plugin-react": "^4.2.1"
+    }
+}

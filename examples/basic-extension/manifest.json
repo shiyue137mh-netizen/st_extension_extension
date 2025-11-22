@@ -1,0 +1,9 @@
+{
+    "name": "Basic Extension",
+    "version": "1.0.0",
+    "description": "A basic example extension using V2",
+    "author": "Antigravity",
+    "frameworkDependencies": {
+        "react": "18.2.0"
+    }
+}
