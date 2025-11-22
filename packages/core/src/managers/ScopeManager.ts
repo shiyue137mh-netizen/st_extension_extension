@@ -1,145 +1,127 @@
 export interface ScopeBinding {
-    extensionId: string;
-    characterId?: string;
-    chatId?: string;
-    enabled: boolean;
+    targets: string[];
 }
 
 export class ScopeManager {
-    private bindings: Map<string, ScopeBinding[]> = new Map();
-    private globallyEnabled: Set<string> = new Set();
-
     constructor() {
         console.log('[ScopeManager] Initialized');
-        this.loadBindings();
     }
 
     /**
-     * Load bindings from localStorage
+     * Get all bindings from settings
      */
-    private loadBindings() {
-        try {
-            const stored = localStorage.getItem('ee_scope_bindings');
-            if (stored) {
-                const data = JSON.parse(stored);
-                this.bindings = new Map(Object.entries(data.bindings || {}));
-                this.globallyEnabled = new Set(data.globallyEnabled || []);
+    getAllBindings(): Record<string, ScopeBinding> {
+        if (typeof window === 'undefined') {
+            return {};
+        }
+
+        const ctx = (window as any).SillyTavern?.getContext?.();
+        const extensionSettings = ctx?.extensionSettings;
+
+        if (!extensionSettings || !extensionSettings.extensionExtension) {
+            return {};
+        }
+
+        const settings = extensionSettings.extensionExtension;
+        if (!settings.scopeBindings) {
+            settings.scopeBindings = {};
+        }
+        return settings.scopeBindings;
+    }
+
+    /**
+     * Save bindings to settings
+     */
+    private saveBindings(bindings: Record<string, ScopeBinding>) {
+        if (typeof window === 'undefined') return;
+
+        const ctx = (window as any).SillyTavern?.getContext?.();
+        const extensionSettings = ctx?.extensionSettings;
+
+        if (!extensionSettings || !extensionSettings.extensionExtension) {
+            console.error('[ScopeManager] Cannot save bindings: extensionSettings not available');
+            return;
+        }
+
+        const settings = extensionSettings.extensionExtension;
+        settings.scopeBindings = bindings;
+
+        // Save using SillyTavern's save function
+        if (ctx?.saveSettingsDebounced) {
+            ctx.saveSettingsDebounced();
+            console.log('[ScopeManager] Settings saved');
+        } else {
+            console.warn('[ScopeManager] saveSettingsDebounced not available');
+        }
+    }
+
+    /**
+     * Bind extension to a character
+     */
+    bindToCharacter(extensionId: string, characterId: string) {
+        const bindings = this.getAllBindings();
+
+        if (!bindings[extensionId]) {
+            bindings[extensionId] = { targets: [] };
+        }
+
+        if (!bindings[extensionId].targets.includes(characterId)) {
+            bindings[extensionId].targets.push(characterId);
+            this.saveBindings(bindings);
+            console.log(`[ScopeManager] Bound ${extensionId} to character ${characterId}`);
+        }
+    }
+
+    /**
+     * Unbind extension from a character
+     */
+    unbindFromCharacter(extensionId: string, characterId: string) {
+        const bindings = this.getAllBindings();
+
+        if (bindings[extensionId] && bindings[extensionId].targets) {
+            bindings[extensionId].targets = bindings[extensionId].targets.filter(id => id !== characterId);
+
+            // Clean up empty bindings
+            if (bindings[extensionId].targets.length === 0) {
+                delete bindings[extensionId];
             }
-        } catch (error) {
-            console.error('[ScopeManager] Failed to load bindings:', error);
+
+            this.saveBindings(bindings);
+            console.log(`[ScopeManager] Unbound ${extensionId} from character ${characterId}`);
         }
     }
 
     /**
-     * Save bindings to localStorage
+     * Check if extension is bound to a specific character
      */
-    private saveBindings() {
-        try {
-            const data = {
-                bindings: Object.fromEntries(this.bindings),
-                globallyEnabled: Array.from(this.globallyEnabled),
-            };
-            localStorage.setItem('ee_scope_bindings', JSON.stringify(data));
-        } catch (error) {
-            console.error('[ScopeManager] Failed to save bindings:', error);
-        }
+    isBoundToCharacter(extensionId: string, characterId: string): boolean {
+        const bindings = this.getAllBindings();
+        return bindings[extensionId]?.targets?.includes(characterId) || false;
     }
 
     /**
-     * Enable extension globally (no scope restrictions)
+     * Check if extension has ANY bindings (if so, it's restricted)
      */
-    enableGlobally(extensionId: string) {
-        this.globallyEnabled.add(extensionId);
-        this.saveBindings();
+    hasBindings(extensionId: string): boolean {
+        const bindings = this.getAllBindings();
+        return bindings[extensionId]?.targets?.length > 0;
     }
 
     /**
-     * Disable extension globally
+     * Check if extension should be active for the given character
+     * Logic:
+     * 1. If extension has NO bindings -> Active (Global)
+     * 2. If extension HAS bindings -> Only Active if bound to current character
      */
-    disableGlobally(extensionId: string) {
-        this.globallyEnabled.delete(extensionId);
-        this.saveBindings();
-    }
-
-    /**
-     * Check if extension is globally enabled
-     */
-    isGloballyEnabled(extensionId: string): boolean {
-        return this.globallyEnabled.has(extensionId);
-    }
-
-    /**
-     * Bind extension to specific character/chat
-     */
-    addBinding(extensionId: string, characterId?: string, chatId?: string) {
-        if (!this.bindings.has(extensionId)) {
-            this.bindings.set(extensionId, []);
-        }
-
-        const bindings = this.bindings.get(extensionId)!;
-        bindings.push({
-            extensionId,
-            characterId,
-            chatId,
-            enabled: true,
-        });
-
-        this.saveBindings();
-    }
-
-    /**
-     * Remove binding
-     */
-    removeBinding(extensionId: string, characterId?: string, chatId?: string) {
-        const bindings = this.bindings.get(extensionId);
-        if (!bindings) return;
-
-        const filtered = bindings.filter(b => {
-            if (characterId && b.characterId !== characterId) return true;
-            if (chatId && b.chatId !== chatId) return true;
-            return false;
-        });
-
-        this.bindings.set(extensionId, filtered);
-        this.saveBindings();
-    }
-
-    /**
-     * Get all bindings for an extension
-     */
-    getBindings(extensionId: string): ScopeBinding[] {
-        return this.bindings.get(extensionId) || [];
-    }
-
-    /**
-     * Check if extension should be active in current context
-     */
-    isActiveInContext(extensionId: string, characterId?: string, chatId?: string): boolean {
-        // If globally enabled, always active
-        if (this.isGloballyEnabled(extensionId)) {
+    isActiveForCharacter(extensionId: string, characterId?: string): boolean {
+        // If no bindings exist for this extension, it's global
+        if (!this.hasBindings(extensionId)) {
             return true;
         }
 
-        // Check scope bindings
-        const bindings = this.getBindings(extensionId);
-        if (bindings.length === 0) {
-            return false; // Not enabled if no bindings and not global
-        }
-
-        return bindings.some(b => {
-            if (b.characterId && b.characterId === characterId) return b.enabled;
-            if (b.chatId && b.chatId === chatId) return b.enabled;
-            return false;
-        });
-    }
-
-    /**
-     * Get all registered extensions
-     */
-    getAllExtensions(): string[] {
-        const allExtensions = new Set<string>();
-        this.globallyEnabled.forEach(id => allExtensions.add(id));
-        this.bindings.forEach((_, id) => allExtensions.add(id));
-        return Array.from(allExtensions);
+        // If bindings exist, it must be bound to the current character
+        if (!characterId) return false;
+        return this.isBoundToCharacter(extensionId, characterId);
     }
 }
+

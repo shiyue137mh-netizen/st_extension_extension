@@ -1,17 +1,22 @@
 import './index.css';
 import './ui/manager/theme.css';
 import './ui/manager/dividers.css';
-import { PluginManager } from './managers/PluginManager';
 import { MacroSystem } from './managers/MacroSystem';
 import { UIManager } from './managers/UIManager';
 import { CommandManager } from './managers/CommandManager';
 import { SettingsManager } from './managers/SettingsManager';
-import { FrameworkLoader } from './managers/FrameworkLoader';
 import { DependencyManager } from './managers/DependencyManager';
 import { ScopeManager } from './managers/ScopeManager';
 import { FrameworkRegistry } from './managers/FrameworkRegistry';
 
+// Import SillyTavern internals
+// @ts-ignore - External dependency resolved at runtime
+import { saveSettingsDebounced, eventSource } from '../../../script.js';
+// @ts-ignore - External dependency resolved at runtime
+import { extension_settings, extensionNames } from '../../extensions.js';
+
 console.log('Extension Extension Core Loading...');
+console.log('ST Internals Loaded:', { extensionNames, hasSettings: !!extension_settings });
 
 // Extension Context Interface
 export interface ExtensionContext {
@@ -30,14 +35,12 @@ export interface ExtensionContext {
 
 // Global Registry
 export const globalRegistry = {
-    frameworks: new Map(),
+    frameworks: new Map(), // TODO: Migrate to frameworkRegistry completely
     macros: new Map(),
-    pluginManager: null as PluginManager | null,
     macroSystem: null as MacroSystem | null,
     uiManager: null as UIManager | null,
     commandManager: null as CommandManager | null,
     settingsManager: null as SettingsManager | null,
-    frameworkLoader: null as FrameworkLoader | null,
     dependencyManager: null as DependencyManager | null,
     scopeManager: null as ScopeManager | null,
     frameworkRegistry: null as FrameworkRegistry | null,
@@ -88,22 +91,18 @@ export const globalRegistry = {
 };
 
 // Initialize Managers
-const pluginManager = new PluginManager();
 const macroSystem = new MacroSystem();
 const uiManager = new UIManager();
 const commandManager = new CommandManager();
 const settingsManager = new SettingsManager();
-const frameworkLoader = new FrameworkLoader();
 const dependencyManager = new DependencyManager();
 const scopeManager = new ScopeManager();
 const frameworkRegistry = new FrameworkRegistry();
 
-globalRegistry.pluginManager = pluginManager;
 globalRegistry.macroSystem = macroSystem;
 globalRegistry.uiManager = uiManager;
 globalRegistry.commandManager = commandManager;
 globalRegistry.settingsManager = settingsManager;
-globalRegistry.frameworkLoader = frameworkLoader;
 globalRegistry.dependencyManager = dependencyManager;
 globalRegistry.scopeManager = scopeManager;
 globalRegistry.frameworkRegistry = frameworkRegistry;
@@ -120,7 +119,68 @@ dependencyManager.register('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@
 // Mount UI automatically
 uiManager.mount();
 
+// Setup Event Listeners
+const setupEventListeners = () => {
+    const eventSource = (window as any).eventSource;
+    if (eventSource && eventSource.on) {
+        // Listen for character changes
+        eventSource.on('characterSelected', (_charId: string) => {
+            const ctx = (window as any).SillyTavern?.getContext?.();
+            const charName = ctx?.name2;
+
+            console.log('[ExtensionExtension] Character changed to:', charName);
+
+            // Emit internal event with character name
+            if (charName) {
+                (window as any).ExtensionExtension.events.emit('characterChanged', charName);
+            }
+        });
+
+        console.log('[ExtensionExtension] Event listeners set up');
+    } else {
+        console.warn('[ExtensionExtension] eventSource not found, character binding may not work');
+    }
+};
+
+// Wait for SillyTavern to be ready (simplistic approach)
+setTimeout(setupEventListeners, 1000);
+
 // Expose to window
-(window as any).ExtensionExtension = globalRegistry;
+// Expose to window
+(window as any).ExtensionExtension = {
+    ...globalRegistry,
+
+    // Expose ST internals for UI components
+    st: {
+        get extension_settings() { return extension_settings; },
+        get extensionNames() { return extensionNames; },
+        get eventSource() { return eventSource; },
+        get saveSettingsDebounced() { return saveSettingsDebounced; },
+        // Use SillyTavern.getContext() for current character
+        getContext() {
+            return (window as any).SillyTavern?.getContext?.() || {};
+        },
+        get currentCharacterName() {
+            const ctx = (window as any).SillyTavern?.getContext?.();
+            return ctx?.name2; // name2 is the character card name
+        }
+    },
+
+    // Legacy API compatibility
+    bindToCharacter: (extId: string, charId: string) => scopeManager.bindToCharacter(extId, charId),
+    unbindPlugin: (extId: string, charId: string) => scopeManager.unbindFromCharacter(extId, charId), // Legacy name was unbindPlugin?
+    unbindFromCharacter: (extId: string, charId: string) => scopeManager.unbindFromCharacter(extId, charId),
+    getAllBindings: () => scopeManager.getAllBindings(),
+    isPluginActive: (extId: string, charId: string) => scopeManager.isActiveForCharacter(extId, charId),
+
+    // Event emitter wrapper
+    on: (event: string, handler: any) => {
+        if (eventSource) eventSource.on(event, handler);
+    },
+    emit: (event: string, ...args: any[]) => {
+        if (eventSource) eventSource.emit(event, ...args);
+    }
+};
+
 
 export default globalRegistry;

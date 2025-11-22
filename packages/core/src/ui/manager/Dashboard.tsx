@@ -7,7 +7,12 @@ export const Dashboard: React.FC = () => {
     const { t } = useTranslation();
     const loadedFrameworks = globalRegistry.frameworkLoader?.getLoadedFrameworks() || [];
     const dependencies = globalRegistry.dependencyManager?.getAllDependencies() || [];
-    const loadedDeps = dependencies.filter(d => d.loaded).length;
+    const loadedDeps = dependencies.filter((d: any) => d.loaded).length;
+
+    // Get extension count - use same method as ExtensionsView
+    const st = (window as any).ExtensionExtension?.st;
+    const extensionNames = st?.extensionNames || [];
+    const extensionCount = Object.keys(extensionNames).length;
 
     const handleLoadVue = async () => {
         if (globalRegistry.frameworkLoader) {
@@ -46,7 +51,7 @@ export const Dashboard: React.FC = () => {
                         <div className="ee-stat-icon" style={{ background: 'oklch(0.6132 0.2294 291.7437 / 0.15)' }}>
                             <Box size={24} style={{ color: 'oklch(0.6132 0.2294 291.7437)' }} />
                         </div>
-                        <div className="ee-stat-value">0</div>
+                        <div className="ee-stat-value">{extensionCount}</div>
                         <div className="ee-stat-label">{t('dashboard.extensions')}</div>
                     </div>
 

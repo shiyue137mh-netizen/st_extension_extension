@@ -7,26 +7,42 @@ import { DependenciesView } from './manager/DependenciesView';
 import { ExtensionsView } from './manager/ExtensionsView';
 import { SettingsView } from './manager/SettingsView';
 import { Settings } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export const ManagerApp: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeView, setActiveView] = useState<SidebarView>('dashboard');
 
     const renderContent = () => {
-        switch (activeView) {
-            case 'dashboard':
-                return <Dashboard />;
-            case 'frameworks':
-                return <FrameworksView />;
-            case 'dependencies':
-                return <DependenciesView />;
-            case 'extensions':
-                return <ExtensionsView />;
-            case 'settings':
-                return <SettingsView />;
-            default:
-                return <Dashboard />;
-        }
+        const content = (() => {
+            switch (activeView) {
+                case 'dashboard':
+                    return <Dashboard />;
+                case 'frameworks':
+                    return <FrameworksView />;
+                case 'dependencies':
+                    return <DependenciesView />;
+                case 'extensions':
+                    return <ExtensionsView />;
+                case 'settings':
+                    return <SettingsView />;
+                default:
+                    return <Dashboard />;
+            }
+        })();
+
+        return (
+            <motion.div
+                key={activeView}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                style={{ height: '100%', width: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+            >
+                {content}
+            </motion.div>
+        );
     };
 
     return (
@@ -42,9 +58,13 @@ export const ManagerApp: React.FC = () => {
 
             {/* Manager Modal */}
             <ManagerModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-                <div style={{ display: 'flex', height: '100%' }}>
+                <div style={{ display: 'flex', height: '100%', width: '100%' }}>
                     <Sidebar activeView={activeView} onViewChange={setActiveView} />
-                    {renderContent()}
+                    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                        <AnimatePresence mode="wait">
+                            {renderContent()}
+                        </AnimatePresence>
+                    </div>
                 </div>
             </ManagerModal>
         </>

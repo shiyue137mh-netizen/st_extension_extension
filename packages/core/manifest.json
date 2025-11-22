@@ -1,15 +1,13 @@
 {
-    "display_name": "Extension Extension V2",
+    "display_name": "Extension Extension",
     "name": "Extension Extension V2",
     "version": "2.0.0",
     "author": "Antigravity",
     "description": "The core platform for modern SillyTavern extensions.",
     "repo": "https://github.com/your-repo/extension-extension",
-    "loading_order": 1,
+    "loading_order": -100,
     "requires": [],
     "optional": [],
-    "css": [
-        "style.css"
-    ],
-    "js": "index.iife.js"
+    "css": "dist/style.css",
+    "js": "dist/index.js"
 }
