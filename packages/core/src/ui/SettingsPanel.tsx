@@ -149,21 +149,140 @@ export const SettingsPanel = () => {
 
                     {/* Dependencies Tab */}
                     <TabsContent value="dependencies" className="space-y-4">
-                        <div className="text-center py-8 text-zinc-500">
-                            <p className="text-sm">依赖管理功能开发中...</p>
-                            <p className="text-xs mt-2">将显示所有已注册的共享依赖</p>
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-semibold">共享依赖库</h4>
+
+                            {globalRegistry.dependencyManager?.getAllDependencies().map((dep) => (
+                                <div key={dep.name} className="flex items-center justify-between p-3 bg-zinc-800 rounded-md">
+                                    <div className="flex-1">
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm font-medium">{dep.name}</span>
+                                            <span className={`text-xs ${dep.loaded ? 'text-green-400' : 'text-zinc-500'}`}>
+                                                {dep.loaded ? '✓ 已加载' : '✗ 未加载'}
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-zinc-500 mt-1">
+                                            全局: window.{dep.globalName}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={async () => {
+                                            if (globalRegistry.dependencyManager) {
+                                                try {
+                                                    await globalRegistry.dependencyManager.load(dep.name);
+                                                    // Force re-render
+                                                    setEnabled(prev => prev);
+                                                } catch (error) {
+                                                    console.error(`Failed to load ${dep.name}:`, error);
+                                                    alert(`加载 ${dep.name} 失败`);
+                                                }
+                                            }
+                                        }}
+                                        disabled={dep.loaded}
+                                        className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <i className="fa-solid fa-download mr-1"></i>
+                                        加载
+                                    </button>
+                                </div>
+                            ))}
+
+                            <div className="mt-4 p-3 bg-zinc-900 rounded-md border border-zinc-700">
+                                <p className="text-xs text-zinc-400">
+                                    <i className="fa-solid fa-info-circle mr-1"></i>
+                                    这些依赖从 CDN 加载，供所有扩展共享使用，避免重复加载。
+                                </p>
+                            </div>
                         </div>
                     </TabsContent>
 
                     {/* Frameworks Tab */}
                     <TabsContent value="frameworks" className="space-y-4">
-                        <div className="text-center py-8 text-zinc-500">
-                            <p className="text-sm">框架管理功能开发中...</p>
-                            <p className="text-xs mt-2">将显示 Vue 和 React 的加载状态</p>
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-semibold">框架状态</h4>
+
+                            {/* Vue 3 */}
+                            <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-md">
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-sm font-medium">Vue 3</span>
+                                        <span className={`text-xs ${globalRegistry.frameworkLoader?.isLoaded('vue') ? 'text-green-400' : 'text-red-400'}`}>
+                                            {globalRegistry.frameworkLoader?.isLoaded('vue') ? '✓ 已加载' : '✗ 未加载'}
+                                        </span>
+                                    </div>
+                                    {globalRegistry.frameworkLoader?.isLoaded('vue') && (
+                                        <p className="text-xs text-zinc-500 mt-1">
+                                            全局对象: window.Vue
+                                        </p>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        if (globalRegistry.frameworkLoader) {
+                                            try {
+                                                await globalRegistry.frameworkLoader.loadVue();
+                                                // Force re-render
+                                                setEnabled(prev => prev);
+                                            } catch (error) {
+                                                console.error('Failed to load Vue:', error);
+                                                alert('加载 Vue 失败，请查看控制台');
+                                            }
+                                        }
+                                    }}
+                                    disabled={globalRegistry.frameworkLoader?.isLoaded('vue')}
+                                    className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <i className="fa-solid fa-download mr-1"></i>
+                                    加载
+                                </button>
+                            </div>
+
+                            {/* React 18 */}
+                            <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-md">
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-sm font-medium">React 18</span>
+                                        <span className={`text-xs ${globalRegistry.frameworkLoader?.isLoaded('react') ? 'text-green-400' : 'text-red-400'}`}>
+                                            {globalRegistry.frameworkLoader?.isLoaded('react') ? '✓ 已加载' : '✗ 未加载'}
+                                        </span>
+                                    </div>
+                                    {globalRegistry.frameworkLoader?.isLoaded('react') && (
+                                        <p className="text-xs text-zinc-500 mt-1">
+                                            全局对象: window.React, window.ReactDOM
+                                        </p>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        if (globalRegistry.frameworkLoader) {
+                                            try {
+                                                await globalRegistry.frameworkLoader.loadReact();
+                                                // Force re-render
+                                                setEnabled(prev => prev);
+                                            } catch (error) {
+                                                console.error('Failed to load React:', error);
+                                                alert('加载 React 失败，请查看控制台');
+                                            }
+                                        }
+                                    }}
+                                    disabled={globalRegistry.frameworkLoader?.isLoaded('react')}
+                                    className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <i className="fa-solid fa-download mr-1"></i>
+                                    加载
+                                </button>
+                            </div>
+
+                            <div className="mt-4 p-3 bg-zinc-900 rounded-md border border-zinc-700">
+                                <p className="text-xs text-zinc-400">
+                                    <i className="fa-solid fa-info-circle mr-1"></i>
+                                    框架从 CDN 加载，用于其他扩展使用。Core 本身已内置 React。
+                                </p>
+                            </div>
                         </div>
                     </TabsContent>
                 </Tabs>
             </div>
-        </div>
+        </div >
     );
 };

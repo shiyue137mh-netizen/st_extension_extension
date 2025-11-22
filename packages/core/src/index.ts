@@ -4,6 +4,8 @@ import { MacroSystem } from './managers/MacroSystem';
 import { UIManager } from './managers/UIManager';
 import { CommandManager } from './managers/CommandManager';
 import { SettingsManager } from './managers/SettingsManager';
+import { FrameworkLoader } from './managers/FrameworkLoader';
+import { DependencyManager } from './managers/DependencyManager';
 
 console.log('Extension Extension Core Loading...');
 
@@ -31,6 +33,8 @@ export const globalRegistry = {
     uiManager: null as UIManager | null,
     commandManager: null as CommandManager | null,
     settingsManager: null as SettingsManager | null,
+    frameworkLoader: null as FrameworkLoader | null,
+    dependencyManager: null as DependencyManager | null,
 
     // Factory for creating extension contexts
     createContext: (id: string, manifest: any): ExtensionContext => {
@@ -83,12 +87,16 @@ const macroSystem = new MacroSystem();
 const uiManager = new UIManager();
 const commandManager = new CommandManager();
 const settingsManager = new SettingsManager();
+const frameworkLoader = new FrameworkLoader();
+const dependencyManager = new DependencyManager();
 
 globalRegistry.pluginManager = pluginManager;
 globalRegistry.macroSystem = macroSystem;
 globalRegistry.uiManager = uiManager;
 globalRegistry.commandManager = commandManager;
 globalRegistry.settingsManager = settingsManager;
+globalRegistry.frameworkLoader = frameworkLoader;
+globalRegistry.dependencyManager = dependencyManager;
 
 // Mount UI automatically
 uiManager.mount();
