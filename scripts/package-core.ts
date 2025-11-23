@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 const CORE_DIR = path.resolve(__dirname, '../packages/core');
 const DIST_DIR = path.join(CORE_DIR, 'dist');
+const MANIFEST_SRC = path.join(CORE_DIR, 'manifest.json');
 
 // Read local config
 const localConfigPath = path.resolve(__dirname, '../local-config.json');
@@ -18,41 +19,62 @@ if (fs.existsSync(localConfigPath)) {
     }
 }
 
-console.log(chalk.cyan('Packaging Extension Extension Core...'));
+console.log(chalk.cyan('\n📦 Extension Extension - One-Click Deploy\n'));
 
-// 1. Copy manifest.json to dist (for bundled distribution)
-const manifestSrc = path.join(CORE_DIR, 'manifest.json');
-const manifestDest = path.join(DIST_DIR, 'manifest.json');
-fs.copyFileSync(manifestSrc, manifestDest);
-console.log(chalk.green('Copied manifest.json to dist'));
-
-// 2. Deploy to target directory if configured
-if (targetDir && fs.existsSync(targetDir)) {
-    console.log(chalk.cyan(`\nDeploying to ${targetDir}...`));
-
-    // Remove old files in target
-    if (fs.existsSync(targetDir)) {
-        fs.emptyDirSync(targetDir);
-    }
-
-    // Copy entire dist folder contents to target
-    fs.copySync(DIST_DIR, targetDir, {
-        overwrite: true,
-        filter: (src) => {
-            // Skip node_modules and other unwanted files
-            return !src.includes('node_modules');
-        }
-    });
-
-    console.log(chalk.green('Deployment successful! ✨'));
-} else {
-    console.log(chalk.yellow('\nNo target directory configured or directory does not exist.'));
-    console.log(chalk.yellow('Create local-config.json with targetDir to enable auto-deployment.'));
+// Check if dist exists
+if (!fs.existsSync(DIST_DIR)) {
+    console.error(chalk.red('❌ Error: dist directory not found!'));
+    console.error(chalk.yellow('   Please run "pnpm run build" first.'));
+    process.exit(1);
 }
 
-// 3. Show instructions
-console.log(chalk.cyan('\nDeployment Instructions:'));
-console.log(`1. Copy the entire folder: ${chalk.bold(DIST_DIR)}`);
-console.log(`2. Paste it into: ${chalk.bold('SillyTavern/public/scripts/extensions/extension-extension')}`);
-console.log(chalk.gray('\nNote: The dist folder contains manifest.json, index.js, and style.css'));
-console.log(chalk.gray('Manifest.json uses dist/index.js and dist/style.css paths'));
+// Deploy to target directory if configured
+if (targetDir) {
+    if (!fs.existsSync(targetDir)) {
+        console.log(chalk.yellow(`⚠️  Target directory does not exist, creating: ${targetDir}`));
+        fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    console.log(chalk.cyan(`📂 Deploying to: ${targetDir}\n`));
+
+    // Clear target directory
+    fs.emptyDirSync(targetDir);
+
+    // Copy manifest.json to target root
+    fs.copyFileSync(MANIFEST_SRC, path.join(targetDir, 'manifest.json'));
+    console.log(chalk.green('   ✓ manifest.json'));
+
+    // Create dist subfolder in target
+    const targetDistDir = path.join(targetDir, 'dist');
+    fs.mkdirSync(targetDistDir, { recursive: true });
+
+    // Copy index.js to target/dist/
+    const indexSrc = path.join(DIST_DIR, 'index.js');
+    if (fs.existsSync(indexSrc)) {
+        fs.copyFileSync(indexSrc, path.join(targetDistDir, 'index.js'));
+        console.log(chalk.green('   ✓ dist/index.js'));
+    }
+
+    // Copy style.css to target/dist/
+    const styleSrc = path.join(DIST_DIR, 'style.css');
+    if (fs.existsSync(styleSrc)) {
+        fs.copyFileSync(styleSrc, path.join(targetDistDir, 'style.css'));
+        console.log(chalk.green('   ✓ dist/style.css'));
+    }
+
+    console.log(chalk.green.bold('\n✨ Deployment successful!\n'));
+} else {
+    console.log(chalk.yellow('⚠️  No target directory configured.'));
+    console.log(chalk.cyan('\nTo enable auto-deployment:'));
+    console.log(chalk.gray('1. Copy local-config.example.json to local-config.json'));
+    console.log(chalk.gray('2. Set targetDir to your SillyTavern extension path\n'));
+}
+
+// Show structure
+console.log(chalk.cyan('📋 Deployed Structure:\n'));
+console.log(chalk.gray('extension-extension/'));
+console.log(chalk.gray('├── manifest.json (points to dist/index.js)'));
+console.log(chalk.gray('└── dist/'));
+console.log(chalk.gray('    ├── index.js'));
+console.log(chalk.gray('    └── style.css'));
+console.log('');

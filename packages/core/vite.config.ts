@@ -13,7 +13,7 @@ const copyToTarget = () => {
                 try {
                     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
                     if (config.targetDir && fs.existsSync(config.targetDir)) {
-                        console.log(`\n[Vite] Deploying to ${config.targetDir}...`);
+                        console.log(`\n[Vite] 🚀 Deploying to ${config.targetDir}...`);
 
                         const distDir = resolve(__dirname, 'dist');
 
@@ -21,33 +21,40 @@ const copyToTarget = () => {
                         const files = fs.readdirSync(config.targetDir);
                         files.forEach(file => {
                             const filePath = resolve(config.targetDir, file);
-                            if (fs.statSync(filePath).isFile()) {
-                                fs.unlinkSync(filePath);
-                            } else if (fs.statSync(filePath).isDirectory()) {
-                                fs.rmSync(filePath, { recursive: true, force: true });
+                            try {
+                                if (fs.statSync(filePath).isFile()) {
+                                    fs.unlinkSync(filePath);
+                                } else if (fs.statSync(filePath).isDirectory()) {
+                                    fs.rmSync(filePath, { recursive: true, force: true });
+                                }
+                            } catch (e) {
+                                // Ignore
                             }
                         });
 
-                        // Copy manifest.json to target root
+                        // Copy manifest.json from root to target root
                         const manifestSrc = resolve(__dirname, 'manifest.json');
                         const manifestDest = resolve(config.targetDir, 'manifest.json');
                         fs.copyFileSync(manifestSrc, manifestDest);
 
-                        // Create dist folder in target and copy contents
+                        // Create dist subfolder in target
                         const targetDistDir = resolve(config.targetDir, 'dist');
                         if (!fs.existsSync(targetDistDir)) {
                             fs.mkdirSync(targetDistDir, { recursive: true });
                         }
 
-                        // Copy all files from dist to target/dist
-                        const distFiles = fs.readdirSync(distDir);
-                        for (const file of distFiles) {
-                            const src = resolve(distDir, file);
-                            const dest = resolve(targetDistDir, file);
-                            fs.copyFileSync(src, dest);
+                        // Copy index.js and style.css to target/dist/
+                        const jsFile = resolve(distDir, 'index.js');
+                        const cssFile = resolve(distDir, 'style.css');
+
+                        if (fs.existsSync(jsFile)) {
+                            fs.copyFileSync(jsFile, resolve(targetDistDir, 'index.js'));
+                        }
+                        if (fs.existsSync(cssFile)) {
+                            fs.copyFileSync(cssFile, resolve(targetDistDir, 'style.css'));
                         }
 
-                        console.log('[Vite] Deployment successful! ✨');
+                        console.log('[Vite] ✨ Deployment successful!');
                     }
                 } catch (e) {
                     console.error('[Vite] Auto-deployment failed:', e);
@@ -73,8 +80,10 @@ export default defineConfig({
         },
         rollupOptions: {
             // Mark SillyTavern's runtime dependencies as external
-            // These paths are relative to the deployed file location
-            external: ['../../../script.js', '../../extensions.js'],
+            // Use regex to match without resolving
+            external: (id) => {
+                return id.includes('script.js') || id.includes('extensions.js');
+            },
             output: {
                 entryFileNames: 'index.js',
                 format: 'es',

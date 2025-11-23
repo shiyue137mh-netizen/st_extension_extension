@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "author": "Antigravity",
     "description": "The core platform for modern SillyTavern extensions.",
-    "repo": "https://github.com/your-repo/extension-extension",
+    "repo": "https://github.com/shiyue137mh-netizen/st_extension_extension",
     "loading_order": -100,
     "requires": [],
     "optional": [],

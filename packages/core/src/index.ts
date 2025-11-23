@@ -10,10 +10,11 @@ import { ScopeManager } from './managers/ScopeManager';
 import { FrameworkRegistry } from './managers/FrameworkRegistry';
 
 // Import SillyTavern internals
+// Paths are relative to deployed location: extension-extension/dist/index.js
 // @ts-ignore - External dependency resolved at runtime
-import { saveSettingsDebounced, eventSource } from '../../../script.js';
+import { saveSettingsDebounced, eventSource } from '../../../../script.js';
 // @ts-ignore - External dependency resolved at runtime
-import { extension_settings, extensionNames } from '../../extensions.js';
+import { extension_settings, extensionNames } from '../../../extensions.js';
 
 console.log('Extension Extension Core Loading...');
 console.log('ST Internals Loaded:', { extensionNames, hasSettings: !!extension_settings });
