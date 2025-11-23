@@ -5,8 +5,11 @@ export interface Dependency {
     url: string;
     globalName: string;
     loaded: boolean;
-    description?: string; // Add description field
-    autoload?: boolean; // Whether to auto-load on startup
+    description?: string;
+    autoload?: boolean; // Deprecated, use mode instead
+    mode: 'always-on' | 'on-demand'; // Loading mode
+    scriptElement?: HTMLScriptElement | HTMLLinkElement; // Track the loaded element
+    references: Set<string>; // Set of extension IDs using this dependency
 }
 
 export class DependencyManager {
@@ -139,7 +142,9 @@ export class DependencyManager {
             name: 'react',
             url: 'bundled',
             globalName: 'React',
-            loaded: true
+            loaded: true,
+            mode: 'always-on',
+            references: new Set()
         });
         console.log('[DependencyManager] Exposed bundled React');
 
@@ -150,7 +155,9 @@ export class DependencyManager {
                 name: 'react-dom',
                 url: 'bundled',
                 globalName: 'ReactDOM',
-                loaded: true
+                loaded: true,
+                mode: 'always-on',
+                references: new Set()
             });
             console.log('[DependencyManager] Detected bundled ReactDOM');
         }
@@ -163,7 +170,9 @@ export class DependencyManager {
                     name: 'zustand',
                     url: 'bundled',
                     globalName: 'zustand',
-                    loaded: true
+                    loaded: true,
+                    mode: 'always-on',
+                    references: new Set()
                 });
                 console.log('[DependencyManager] Detected bundled Zustand');
             }
@@ -189,7 +198,9 @@ export class DependencyManager {
                         url: 'preloaded',
                         globalName: global,
                         loaded: true,
-                        description
+                        description,
+                        mode: 'always-on',
+                        references: new Set()
                     });
                     console.log(`[DependencyManager] Detected preloaded ${name}`);
                 }
@@ -211,7 +222,9 @@ export class DependencyManager {
                 globalName,
                 loaded: !!(window as any)[globalName], // Check if already loaded
                 description,
-                autoload
+                autoload,
+                mode: autoload ? 'always-on' : 'on-demand', // Default based on autoload
+                references: new Set()
             });
         }
     }
@@ -306,6 +319,7 @@ export class DependencyManager {
             script.src = dep.url;
             script.onload = () => {
                 dep.loaded = true;
+                dep.scriptElement = script; // Track the script element
                 console.log(`[DependencyManager] ${name} loaded successfully`);
                 resolve((window as any)[dep.globalName]);
             };
@@ -315,6 +329,119 @@ export class DependencyManager {
 
         this.loadingPromises.set(name, promise);
         return promise;
+    }
+
+    /**
+     * Load a dependency for a specific extension (on-demand loading)
+     */
+    async loadForExtension(name: string, extensionId: string): Promise<any> {
+        const dep = this.dependencies.get(name);
+
+        if (!dep) {
+            throw new Error(`Dependency ${name} not registered`);
+        }
+
+        // Add extension to references
+        dep.references.add(extensionId);
+        console.log(`[DependencyManager] ${name} requested by ${extensionId}, refs: ${dep.references.size}`);
+
+        // Load if not already loaded
+        if (!dep.loaded || !(window as any)[dep.globalName]) {
+            return this.load(name);
+        }
+
+        return (window as any)[dep.globalName];
+    }
+
+    /**
+     * Unload a dependency for a specific extension
+     */
+    async unloadForExtension(name: string, extensionId: string): Promise<void> {
+        const dep = this.dependencies.get(name);
+
+        if (!dep) {
+            console.warn(`[DependencyManager] Dependency ${name} not found`);
+            return;
+        }
+
+        // Remove extension from references
+        dep.references.delete(extensionId);
+        console.log(`[DependencyManager] ${name} released by ${extensionId}, refs: ${dep.references.size}`);
+
+        // Only unload if no references and mode is on-demand
+        if (dep.references.size === 0 && dep.mode === 'on-demand') {
+            await this.unload(name);
+        }
+    }
+
+    /**
+     * Unload a dependency (remove script tag)
+     */
+    async unload(name: string): Promise<void> {
+        const dep = this.dependencies.get(name);
+
+        if (!dep) {
+            console.warn(`[DependencyManager] Dependency ${name} not found`);
+            return;
+        }
+
+        if (!dep.loaded) {
+            console.log(`[DependencyManager] ${name} already unloaded`);
+            return;
+        }
+
+        // Remove script element
+        if (dep.scriptElement && dep.scriptElement.parentNode) {
+            dep.scriptElement.parentNode.removeChild(dep.scriptElement);
+            dep.scriptElement = undefined;
+        }
+
+        // Mark as unloaded
+        dep.loaded = false;
+
+        // Remove from loading promises
+        this.loadingPromises.delete(name);
+
+        console.log(`[DependencyManager] ${name} unloaded`);
+    }
+
+    /**
+     * Set loading mode for a dependency
+     */
+    setMode(name: string, mode: 'always-on' | 'on-demand'): void {
+        const dep = this.dependencies.get(name);
+        if (!dep) {
+            console.warn(`[DependencyManager] Dependency ${name} not found`);
+            return;
+        }
+
+        const oldMode = dep.mode;
+        dep.mode = mode;
+
+        // Save to settings if switching to always-on
+        if (mode === 'always-on') {
+            this.setAutoload(name, true);
+        } else {
+            this.setAutoload(name, false);
+        }
+
+        console.log(`[DependencyManager] ${name} mode changed: ${oldMode} -> ${mode}`);
+    }
+
+    /**
+     * Get references count for a dependency
+     */
+    getReferencesCount(name: string): number {
+        const dep = this.dependencies.get(name);
+        return dep?.references.size || 0;
+    }
+
+    /**
+     * Get all extensions using a dependency
+     */
+    getReferences(name: string): string[] {
+        const dep = this.dependencies.get(name);
+        return dep ? Array.from(dep.references) : [];
     }
 
     /**

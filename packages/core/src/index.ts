@@ -120,6 +120,72 @@ dependencyManager.register('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@
 // Mount UI automatically
 uiManager.mount();
 
+// Track previous character for cleanup
+let previousCharacter: string | null = null;
+
+/**
+ * Handle character switch - enable/disable bound extensions
+ */
+async function handleCharacterSwitch(charName: string) {
+    if (!charName) return;
+
+    console.log(`[ExtensionExtension] Character switched to: ${charName}`);
+
+    // Get all bindings
+    const bindings = scopeManager.getAllBindings();
+
+    // Track which extensions to enable/disable
+    const extensionsToEnable: string[] = [];
+    const extensionsToDisable: string[] = [];
+
+    // Check each extension's binding status
+    for (const extensionId in bindings) {
+        const binding = bindings[extensionId];
+
+        // If bound to current character, enable it
+        if (binding.targets.includes(charName)) {
+            extensionsToEnable.push(extensionId);
+        }
+        // If bound to previous character (but not current), disable it
+        else if (previousCharacter && binding.targets.includes(previousCharacter)) {
+            extensionsToDisable.push(extensionId);
+        }
+    }
+
+    // Import SillyTavern's extension enable/disable functions
+    // @ts-ignore - Runtime dependency
+    const { enableExtension, disableExtension } = await import('../../../../scripts/extensions.js');
+
+    // Disable extensions bound to previous character
+    for (const extId of extensionsToDisable) {
+        try {
+            await disableExtension(extId, false); // Don't reload yet
+            console.log(`[ExtensionExtension] Disabled ${extId} (bound to ${previousCharacter}, not ${charName})`);
+        } catch (e) {
+            console.error(`[ExtensionExtension] Failed to disable ${extId}:`, e);
+        }
+    }
+
+    // Enable extensions bound to current character
+    for (const extId of extensionsToEnable) {
+        try {
+            await enableExtension(extId, false); // Don't reload yet
+            console.log(`[ExtensionExtension] Enabled ${extId} (bound to ${charName})`);
+        } catch (e) {
+            console.error(`[ExtensionExtension] Failed to enable ${extId}:`, e);
+        }
+    }
+
+    // Update previous character
+    previousCharacter = charName;
+
+    // Reload if any changes were made
+    if (extensionsToEnable.length > 0 || extensionsToDisable.length > 0) {
+        console.log(`[ExtensionExtension] Reloading page to apply extension changes...`);
+        setTimeout(() => location.reload(), 500);
+    }
+}
+
 // Setup Event Listeners
 const setupEventListeners = () => {
     const eventSource = (window as any).eventSource;
@@ -129,11 +195,8 @@ const setupEventListeners = () => {
             const ctx = (window as any).SillyTavern?.getContext?.();
             const charName = ctx?.name2;
 
-            console.log('[ExtensionExtension] Character changed to:', charName);
-
-            // Emit internal event with character name
             if (charName) {
-                (window as any).ExtensionExtension.events.emit('characterChanged', charName);
+                handleCharacterSwitch(charName);
             }
         });
 
@@ -180,6 +243,14 @@ setTimeout(setupEventListeners, 1000);
     },
     emit: (event: string, ...args: any[]) => {
         if (eventSource) eventSource.emit(event, ...args);
+    },
+
+    // Dependency management convenience methods
+    loadDependency: (name: string, extensionId: string) => {
+        return dependencyManager.loadForExtension(name, extensionId);
+    },
+    unloadDependency: (name: string, extensionId: string) => {
+        return dependencyManager.unloadForExtension(name, extensionId);
     }
 };
 

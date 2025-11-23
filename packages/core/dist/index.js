@@ -4603,11 +4603,11 @@ var codeGenExports = codeGen.exports;
       var revision = _base2.COMPILER_REVISION, versions = _base2.REVISION_CHANGES[revision];
       return [revision, versions];
     },
-    appendToBuffer: function appendToBuffer(source, location, explicit) {
+    appendToBuffer: function appendToBuffer(source, location2, explicit) {
       if (!_utils2.isArray(source)) {
         source = [source];
       }
-      source = this.source.wrap(source, location);
+      source = this.source.wrap(source, location2);
       if (this.environment.isSimple) {
         return ["return ", source, ";"];
       } else if (explicit) {
@@ -7222,7 +7222,7 @@ function requireReact_development() {
             }
           }
         }
-        function checkPropTypes(typeSpecs, values, location, componentName, element) {
+        function checkPropTypes(typeSpecs, values, location2, componentName, element) {
           {
             var has = Function.call.bind(hasOwnProperty);
             for (var typeSpecName in typeSpecs) {
@@ -7230,23 +7230,23 @@ function requireReact_development() {
                 var error$1 = void 0;
                 try {
                   if (typeof typeSpecs[typeSpecName] !== "function") {
-                    var err = Error((componentName || "React class") + ": " + location + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                    var err = Error((componentName || "React class") + ": " + location2 + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
                     err.name = "Invariant Violation";
                     throw err;
                   }
-                  error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
+                  error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location2, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
                 } catch (ex) {
                   error$1 = ex;
                 }
                 if (error$1 && !(error$1 instanceof Error)) {
                   setCurrentlyValidatingElement(element);
-                  error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location, typeSpecName, typeof error$1);
+                  error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location2, typeSpecName, typeof error$1);
                   setCurrentlyValidatingElement(null);
                 }
                 if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
                   loggedTypeFailures[error$1.message] = true;
                   setCurrentlyValidatingElement(element);
-                  error("Failed %s type: %s", location, error$1.message);
+                  error("Failed %s type: %s", location2, error$1.message);
                   setCurrentlyValidatingElement(null);
                 }
               }
@@ -8187,7 +8187,7 @@ function requireReactJsxRuntime_development() {
           }
         }
       }
-      function checkPropTypes(typeSpecs, values, location, componentName, element) {
+      function checkPropTypes(typeSpecs, values, location2, componentName, element) {
         {
           var has = Function.call.bind(hasOwnProperty);
           for (var typeSpecName in typeSpecs) {
@@ -8195,23 +8195,23 @@ function requireReactJsxRuntime_development() {
               var error$1 = void 0;
               try {
                 if (typeof typeSpecs[typeSpecName] !== "function") {
-                  var err = Error((componentName || "React class") + ": " + location + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                  var err = Error((componentName || "React class") + ": " + location2 + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
                   err.name = "Invariant Violation";
                   throw err;
                 }
-                error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
+                error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location2, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
               } catch (ex) {
                 error$1 = ex;
               }
               if (error$1 && !(error$1 instanceof Error)) {
                 setCurrentlyValidatingElement(element);
-                error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location, typeSpecName, typeof error$1);
+                error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location2, typeSpecName, typeof error$1);
                 setCurrentlyValidatingElement(null);
               }
               if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
                 loggedTypeFailures[error$1.message] = true;
                 setCurrentlyValidatingElement(element);
-                error("Failed %s type: %s", location, error$1.message);
+                error("Failed %s type: %s", location2, error$1.message);
                 setCurrentlyValidatingElement(null);
               }
             }
@@ -24177,7 +24177,7 @@ function requireReactDom_development() {
           }
         }
       }
-      function checkPropTypes(typeSpecs, values, location, componentName, element) {
+      function checkPropTypes(typeSpecs, values, location2, componentName, element) {
         {
           var has2 = Function.call.bind(hasOwnProperty);
           for (var typeSpecName in typeSpecs) {
@@ -24185,23 +24185,23 @@ function requireReactDom_development() {
               var error$1 = void 0;
               try {
                 if (typeof typeSpecs[typeSpecName] !== "function") {
-                  var err = Error((componentName || "React class") + ": " + location + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                  var err = Error((componentName || "React class") + ": " + location2 + " type `" + typeSpecName + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof typeSpecs[typeSpecName] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
                   err.name = "Invariant Violation";
                   throw err;
                 }
-                error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
+                error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location2, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
               } catch (ex) {
                 error$1 = ex;
               }
               if (error$1 && !(error$1 instanceof Error)) {
                 setCurrentlyValidatingElement(element);
-                error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location, typeSpecName, typeof error$1);
+                error("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", componentName || "React class", location2, typeSpecName, typeof error$1);
                 setCurrentlyValidatingElement(null);
               }
               if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
                 loggedTypeFailures[error$1.message] = true;
                 setCurrentlyValidatingElement(element);
-                error("Failed %s type: %s", location, error$1.message);
+                error("Failed %s type: %s", location2, error$1.message);
                 setCurrentlyValidatingElement(null);
               }
             }
@@ -51256,11 +51256,6 @@ const DependenciesView = () => {
       });
     }
   };
-  const handleToggleAutoload = (name, currentStatus) => {
-    if (!globalRegistry.dependencyManager) return;
-    globalRegistry.dependencyManager.setAutoload(name, !currentStatus);
-    window.location.reload();
-  };
   const handleLoadAll = async () => {
     var _a2;
     if (!globalRegistry.dependencyManager) return;
@@ -51456,28 +51451,59 @@ const DependenciesView = () => {
             ] }),
             dep.description && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { style: { fontSize: "0.875rem", color: "var(--ee-foreground)", opacity: 0.7, margin: 0 }, children: dep.description })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem" }, children: [
-            dep.url !== "bundled" && dep.url !== "preloaded" && /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "button",
-              {
-                className: "ee-button ee-button-sm",
-                onClick: () => handleToggleAutoload(dep.name, !!dep.autoload),
-                title: dep.autoload ? "自动加载已启用" : "自动加载已禁用",
-                style: {
-                  padding: "0.375rem 0.625rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.25rem",
-                  background: dep.autoload ? "var(--ee-success)" : "var(--ee-muted)",
-                  color: "white",
-                  opacity: dep.autoload ? 1 : 0.6
-                },
-                children: [
-                  dep.autoload ? /* @__PURE__ */ jsxRuntimeExports.jsx(ToggleRight, { size: 14 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(ToggleLeft, { size: 14 }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "0.75rem" }, children: dep.autoload ? "自动" : "手动" })
-                ]
-              }
-            ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }, children: [
+            dep.url !== "bundled" && dep.url !== "preloaded" && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", alignItems: "center", gap: "0.5rem" }, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  style: {
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.5rem",
+                    background: dep.mode === "always-on" ? "var(--ee-success)" : "oklch(0.5 0.1 250 / 0.2)",
+                    color: dep.mode === "always-on" ? "white" : "var(--ee-foreground)",
+                    borderRadius: "4px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.25rem"
+                  },
+                  onClick: () => {
+                    var _a2;
+                    const newMode = dep.mode === "always-on" ? "on-demand" : "always-on";
+                    (_a2 = globalRegistry.dependencyManager) == null ? void 0 : _a2.setMode(dep.name, newMode);
+                    window.location.reload();
+                  },
+                  title: `点击切换模式
+当前: ${dep.mode === "always-on" ? "常开模式" : "按需模式"}`,
+                  children: [
+                    dep.mode === "always-on" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ToggleRight, { size: 14 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(ToggleLeft, { size: 14 }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: dep.mode === "always-on" ? "常开" : "按需" })
+                  ]
+                }
+              ),
+              dep.mode === "on-demand" && dep.references && dep.references.size > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  style: {
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.5rem",
+                    background: "oklch(0.7 0.1 250 / 0.2)",
+                    color: "var(--ee-foreground)",
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.25rem"
+                  },
+                  title: `使用中的扩展:
+${Array.from(dep.references).join("\n")}`,
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { size: 12 }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: dep.references.size })
+                  ]
+                }
+              )
+            ] }),
             !dep.loaded && dep.url !== "bundled" && dep.url !== "preloaded" && /* @__PURE__ */ jsxRuntimeExports.jsx(
               "button",
               {
@@ -52392,7 +52418,9 @@ class DependencyManager {
       name: "react",
       url: "bundled",
       globalName: "React",
-      loaded: true
+      loaded: true,
+      mode: "always-on",
+      references: /* @__PURE__ */ new Set()
     });
     console.log("[DependencyManager] Exposed bundled React");
     const ReactDOM2 = window.ReactDOM;
@@ -52401,7 +52429,9 @@ class DependencyManager {
         name: "react-dom",
         url: "bundled",
         globalName: "ReactDOM",
-        loaded: true
+        loaded: true,
+        mode: "always-on",
+        references: /* @__PURE__ */ new Set()
       });
       console.log("[DependencyManager] Detected bundled ReactDOM");
     }
@@ -52412,7 +52442,9 @@ class DependencyManager {
           name: "zustand",
           url: "bundled",
           globalName: "zustand",
-          loaded: true
+          loaded: true,
+          mode: "always-on",
+          references: /* @__PURE__ */ new Set()
         });
         console.log("[DependencyManager] Detected bundled Zustand");
       }
@@ -52434,7 +52466,9 @@ class DependencyManager {
             url: "preloaded",
             globalName: global,
             loaded: true,
-            description
+            description,
+            mode: "always-on",
+            references: /* @__PURE__ */ new Set()
           });
           console.log(`[DependencyManager] Detected preloaded ${name}`);
         }
@@ -52454,7 +52488,10 @@ class DependencyManager {
         loaded: !!window[globalName],
         // Check if already loaded
         description,
-        autoload
+        autoload,
+        mode: autoload ? "always-on" : "on-demand",
+        // Default based on autoload
+        references: /* @__PURE__ */ new Set()
       });
     }
   }
@@ -52532,6 +52569,7 @@ class DependencyManager {
       script.src = dep.url;
       script.onload = () => {
         dep.loaded = true;
+        dep.scriptElement = script;
         console.log(`[DependencyManager] ${name} loaded successfully`);
         resolve(window[dep.globalName]);
       };
@@ -52540,6 +52578,89 @@ class DependencyManager {
     });
     this.loadingPromises.set(name, promise);
     return promise;
+  }
+  /**
+   * Load a dependency for a specific extension (on-demand loading)
+   */
+  async loadForExtension(name, extensionId) {
+    const dep = this.dependencies.get(name);
+    if (!dep) {
+      throw new Error(`Dependency ${name} not registered`);
+    }
+    dep.references.add(extensionId);
+    console.log(`[DependencyManager] ${name} requested by ${extensionId}, refs: ${dep.references.size}`);
+    if (!dep.loaded || !window[dep.globalName]) {
+      return this.load(name);
+    }
+    return window[dep.globalName];
+  }
+  /**
+   * Unload a dependency for a specific extension
+   */
+  async unloadForExtension(name, extensionId) {
+    const dep = this.dependencies.get(name);
+    if (!dep) {
+      console.warn(`[DependencyManager] Dependency ${name} not found`);
+      return;
+    }
+    dep.references.delete(extensionId);
+    console.log(`[DependencyManager] ${name} released by ${extensionId}, refs: ${dep.references.size}`);
+    if (dep.references.size === 0 && dep.mode === "on-demand") {
+      await this.unload(name);
+    }
+  }
+  /**
+   * Unload a dependency (remove script tag)
+   */
+  async unload(name) {
+    const dep = this.dependencies.get(name);
+    if (!dep) {
+      console.warn(`[DependencyManager] Dependency ${name} not found`);
+      return;
+    }
+    if (!dep.loaded) {
+      console.log(`[DependencyManager] ${name} already unloaded`);
+      return;
+    }
+    if (dep.scriptElement && dep.scriptElement.parentNode) {
+      dep.scriptElement.parentNode.removeChild(dep.scriptElement);
+      dep.scriptElement = void 0;
+    }
+    dep.loaded = false;
+    this.loadingPromises.delete(name);
+    console.log(`[DependencyManager] ${name} unloaded`);
+  }
+  /**
+   * Set loading mode for a dependency
+   */
+  setMode(name, mode) {
+    const dep = this.dependencies.get(name);
+    if (!dep) {
+      console.warn(`[DependencyManager] Dependency ${name} not found`);
+      return;
+    }
+    const oldMode = dep.mode;
+    dep.mode = mode;
+    if (mode === "always-on") {
+      this.setAutoload(name, true);
+    } else {
+      this.setAutoload(name, false);
+    }
+    console.log(`[DependencyManager] ${name} mode changed: ${oldMode} -> ${mode}`);
+  }
+  /**
+   * Get references count for a dependency
+   */
+  getReferencesCount(name) {
+    const dep = this.dependencies.get(name);
+    return (dep == null ? void 0 : dep.references.size) || 0;
+  }
+  /**
+   * Get all extensions using a dependency
+   */
+  getReferences(name) {
+    const dep = this.dependencies.get(name);
+    return dep ? Array.from(dep.references) : [];
   }
   /**
    * Load multiple dependencies
@@ -52786,6 +52907,44 @@ dependencyManager.register("vue", "https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/
 dependencyManager.register("react", "https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js", "React");
 dependencyManager.register("react-dom", "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js", "ReactDOM");
 uiManager.mount();
+let previousCharacter = null;
+async function handleCharacterSwitch(charName) {
+  if (!charName) return;
+  console.log(`[ExtensionExtension] Character switched to: ${charName}`);
+  const bindings = scopeManager.getAllBindings();
+  const extensionsToEnable = [];
+  const extensionsToDisable = [];
+  for (const extensionId in bindings) {
+    const binding = bindings[extensionId];
+    if (binding.targets.includes(charName)) {
+      extensionsToEnable.push(extensionId);
+    } else if (previousCharacter && binding.targets.includes(previousCharacter)) {
+      extensionsToDisable.push(extensionId);
+    }
+  }
+  const { enableExtension, disableExtension } = await import("../../../../scripts/extensions.js");
+  for (const extId of extensionsToDisable) {
+    try {
+      await disableExtension(extId, false);
+      console.log(`[ExtensionExtension] Disabled ${extId} (bound to ${previousCharacter}, not ${charName})`);
+    } catch (e) {
+      console.error(`[ExtensionExtension] Failed to disable ${extId}:`, e);
+    }
+  }
+  for (const extId of extensionsToEnable) {
+    try {
+      await enableExtension(extId, false);
+      console.log(`[ExtensionExtension] Enabled ${extId} (bound to ${charName})`);
+    } catch (e) {
+      console.error(`[ExtensionExtension] Failed to enable ${extId}:`, e);
+    }
+  }
+  previousCharacter = charName;
+  if (extensionsToEnable.length > 0 || extensionsToDisable.length > 0) {
+    console.log(`[ExtensionExtension] Reloading page to apply extension changes...`);
+    setTimeout(() => location.reload(), 500);
+  }
+}
 const setupEventListeners = () => {
   const eventSource2 = window.eventSource;
   if (eventSource2 && eventSource2.on) {
@@ -52793,9 +52952,8 @@ const setupEventListeners = () => {
       var _a, _b;
       const ctx = (_b = (_a = window.SillyTavern) == null ? void 0 : _a.getContext) == null ? void 0 : _b.call(_a);
       const charName = ctx == null ? void 0 : ctx.name2;
-      console.log("[ExtensionExtension] Character changed to:", charName);
       if (charName) {
-        window.ExtensionExtension.events.emit("characterChanged", charName);
+        handleCharacterSwitch(charName);
       }
     });
     console.log("[ExtensionExtension] Event listeners set up");
@@ -52844,6 +53002,13 @@ window.ExtensionExtension = {
   },
   emit: (event, ...args) => {
     if (eventSource) eventSource.emit(event, ...args);
+  },
+  // Dependency management convenience methods
+  loadDependency: (name, extensionId) => {
+    return dependencyManager.loadForExtension(name, extensionId);
+  },
+  unloadDependency: (name, extensionId) => {
+    return dependencyManager.unloadForExtension(name, extensionId);
   }
 };
 export {

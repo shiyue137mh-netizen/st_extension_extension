@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Package, Download, Plus, ExternalLink, CheckCircle2, XCircle, Search, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Package, Download, Plus, ExternalLink, CheckCircle2, XCircle, Search, ToggleLeft, ToggleRight, Users } from 'lucide-react';
 import { globalRegistry } from '../../index';
 import { useTranslation } from '../../i18n';
 
@@ -250,29 +250,55 @@ export const DependenciesView: React.FC = () => {
                                         </p>
                                     )}
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    {/* Autoload Toggle */}
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                                    {/* Mode Display and Reference Count */}
                                     {dep.url !== 'bundled' && dep.url !== 'preloaded' && (
-                                        <button
-                                            className="ee-button ee-button-sm"
-                                            onClick={() => handleToggleAutoload(dep.name, !!dep.autoload)}
-                                            title={dep.autoload ? '自动加载已启用' : '自动加载已禁用'}
-                                            style={{
-                                                padding: '0.375rem 0.625rem',
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            {/* Mode Badge */}
+                                            <div style={{
+                                                fontSize: '0.75rem',
+                                                padding: '0.25rem 0.5rem',
+                                                background: dep.mode === 'always-on' ? 'var(--ee-success)' : 'oklch(0.5 0.1 250 / 0.2)',
+                                                color: dep.mode === 'always-on' ? 'white' : 'var(--ee-foreground)',
+                                                borderRadius: '4px',
+                                                fontWeight: 500,
+                                                cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '0.25rem',
-                                                background: dep.autoload ? 'var(--ee-success)' : 'var(--ee-muted)',
-                                                color: 'white',
-                                                opacity: dep.autoload ? 1 : 0.6
+                                                gap: '0.25rem'
                                             }}
-                                        >
-                                            {dep.autoload ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
-                                            <span style={{ fontSize: '0.75rem' }}>
-                                                {dep.autoload ? '自动' : '手动'}
-                                            </span>
-                                        </button>
+                                                onClick={() => {
+                                                    const newMode = dep.mode === 'always-on' ? 'on-demand' : 'always-on';
+                                                    globalRegistry.dependencyManager?.setMode(dep.name, newMode);
+                                                    window.location.reload();
+                                                }}
+                                                title={`点击切换模式\n当前: ${dep.mode === 'always-on' ? '常开模式' : '按需模式'}`}
+                                            >
+                                                {dep.mode === 'always-on' ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+                                                <span>{dep.mode === 'always-on' ? '常开' : '按需'}</span>
+                                            </div>
+
+                                            {/* Reference Count - Only show for on-demand mode */}
+                                            {dep.mode === 'on-demand' && dep.references && dep.references.size > 0 && (
+                                                <div style={{
+                                                    fontSize: '0.75rem',
+                                                    padding: '0.25rem 0.5rem',
+                                                    background: 'oklch(0.7 0.1 250 / 0.2)',
+                                                    color: 'var(--ee-foreground)',
+                                                    borderRadius: '4px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.25rem'
+                                                }}
+                                                    title={`使用中的扩展:\n${Array.from(dep.references).join('\n')}`}
+                                                >
+                                                    <Users size={12} />
+                                                    <span>{dep.references.size}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
+
                                     {/* Load Button */}
                                     {!dep.loaded && dep.url !== 'bundled' && dep.url !== 'preloaded' && (
                                         <button
