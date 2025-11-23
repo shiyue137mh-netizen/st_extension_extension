@@ -52907,11 +52907,11 @@ dependencyManager.register("vue", "https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/
 dependencyManager.register("react", "https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js", "React");
 dependencyManager.register("react-dom", "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js", "ReactDOM");
 const detectFrameworks = () => {
-  var _a;
+  var _a, _b;
   if (window.TavernHelper) {
     const tavernHelper = window.TavernHelper;
     const version = ((_a = tavernHelper.getTavernHelperVersion) == null ? void 0 : _a.call(tavernHelper)) || "unknown";
-    frameworkRegistry.register({
+    (_b = globalRegistry.frameworkRegistry) == null ? void 0 : _b.register({
       id: "tavernhelper",
       name: "酒馆助手 (JS-Slash-Runner)",
       version,

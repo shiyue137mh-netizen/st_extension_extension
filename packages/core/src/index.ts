@@ -124,7 +124,7 @@ const detectFrameworks = () => {
         const tavernHelper = (window as any).TavernHelper;
         const version = tavernHelper.getTavernHelperVersion?.() || 'unknown';
 
-        frameworkRegistry.register({
+        globalRegistry.frameworkRegistry?.register({
             id: 'tavernhelper',
             name: '酒馆助手 (JS-Slash-Runner)',
             version: version,
