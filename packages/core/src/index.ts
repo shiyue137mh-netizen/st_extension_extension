@@ -117,6 +117,29 @@ dependencyManager.register('vue', 'https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/
 dependencyManager.register('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', 'React');
 dependencyManager.register('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', 'ReactDOM');
 
+// Detect and register SillyTavern frameworks
+const detectFrameworks = () => {
+    // Check for TavernHelper (JS-Slash-Runner)
+    if ((window as any).TavernHelper) {
+        const tavernHelper = (window as any).TavernHelper;
+        const version = tavernHelper.getTavernHelperVersion?.() || 'unknown';
+
+        frameworkRegistry.register({
+            id: 'tavernhelper',
+            name: '酒馆助手 (JS-Slash-Runner)',
+            version: version,
+            description: '强大的 SillyTavern 扩展开发框架，提供丰富的 API 和工具函数',
+            author: 'KAKAA',
+            status: 'active'
+        });
+
+        console.log('[ExtensionExtension] Detected and registered TavernHelper framework');
+    }
+};
+
+// Detect frameworks after a short delay to ensure they're loaded
+setTimeout(detectFrameworks, 100);
+
 // Mount UI automatically
 uiManager.mount();
 

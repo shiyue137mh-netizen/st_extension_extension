@@ -52906,6 +52906,23 @@ dependencyManager.register("dayjs", "https://cdn.jsdelivr.net/npm/dayjs@1.11.10/
 dependencyManager.register("vue", "https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js", "Vue");
 dependencyManager.register("react", "https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js", "React");
 dependencyManager.register("react-dom", "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js", "ReactDOM");
+const detectFrameworks = () => {
+  var _a;
+  if (window.TavernHelper) {
+    const tavernHelper = window.TavernHelper;
+    const version = ((_a = tavernHelper.getTavernHelperVersion) == null ? void 0 : _a.call(tavernHelper)) || "unknown";
+    frameworkRegistry.register({
+      id: "tavernhelper",
+      name: "酒馆助手 (JS-Slash-Runner)",
+      version,
+      description: "强大的 SillyTavern 扩展开发框架，提供丰富的 API 和工具函数",
+      author: "KAKAA",
+      status: "active"
+    });
+    console.log("[ExtensionExtension] Detected and registered TavernHelper framework");
+  }
+};
+setTimeout(detectFrameworks, 100);
 uiManager.mount();
 let previousCharacter = null;
 async function handleCharacterSwitch(charName) {
